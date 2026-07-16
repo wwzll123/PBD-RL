@@ -11,6 +11,12 @@ Large artifacts are not stored in this repository:
 
 Download these artifacts separately and set their local paths in the YAML configs.
 
+
+# Installation
+
+This project is built on PXDesign and only requires the installation of [PXDesign](https://github.com/bytedance/PXDesign).
+
+
 ## Inference
 
 PXDesign already supports custom checkpoint loading through its underlying inference config. The Click help for `pxdesign infer` does not show every forwarded argument, but the following works:
