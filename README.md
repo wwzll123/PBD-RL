@@ -6,7 +6,7 @@ Large artifacts are not stored in this repository:
 
 - PXDesign base checkpoints
 - GRPO fine-tuned checkpoints
-- training datasets
+- full training datasets
 - generated PXDesign / IF / Protenix intermediate files
 
 Download these artifacts separately and set their local paths in the YAML configs.
@@ -50,6 +50,94 @@ bash scripts/run_pxdesign_infer.sh configs/inference.yaml --dry-run
 
 The wrapper supports either one input file or a directory of PXDesign YAML/JSON inputs.
 
+## Training Data
+
+Training uses target-group JSONL files. Each line is one target group and contains multiple candidate binders with scalar `score` values. GRPO advantages are computed within each target group.
+
+The default public training recipe uses **iPTM-only reward**:
+
+```text
+score = ptx_iptm
+```
+
+Build an iPTM-only group file from the integrated metrics TSV:
+
+```bash
+python make_prefer_pair/build_groups_from_metrics_tsv.py \
+  --metrics_tsv /path/to/integrated_metrics.flat_paths.tsv \
+  --out_dir /path/to/grpo_groups_iptm_only \
+  --structure_path_column complex_pdb_path \
+  --max_candidates_per_target 24 \
+  --min_candidates_per_group 4 \
+  --selection_strategy stratified \
+  --w_iptm 1.0 \
+  --w_ptm_binder 0.0 \
+  --w_plddt 0.0 \
+  --w_rmsd_log 0.0
+```
+
+For the full paper-scale run, use the externally hosted group file:
+
+```text
+train_groups.maxatoms5000.iptm_only.jsonl
+```
+
+That file is about 296 MB, so it is not committed to GitHub. A tiny smoke/example file is included at:
+
+```text
+examples/train_groups.iptm_only.smoke.jsonl
+```
+
+The smoke file documents the schema and can run only when its referenced structure paths exist locally.
+
+## Training
+
+Use the iPTM-only config:
+
+```bash
+cp configs/train_iptm_only.yaml configs/train_iptm_only.local.yaml
+# edit model.load_checkpoint_dir and data.groups_jsonl
+```
+
+Single-GPU smoke:
+
+```bash
+bash scripts/run_train_iptm_only.sh configs/train_iptm_only.local.yaml --max_steps 2
+```
+
+Multi-GPU DDP:
+
+```bash
+torchrun --nproc_per_node 6 train.py --config-name train_iptm_only \
+  model.load_checkpoint_dir=/path/to/PXDesign/release_data/checkpoint \
+  data.groups_jsonl=/path/to/train_groups.maxatoms5000.iptm_only.jsonl \
+  experiment.output_dir=/path/to/train_outputs
+```
+
+The public default mirrors the iPTM-only run used in our experiments:
+
+```yaml
+training:
+  epochs: 3
+  noise_parallel_steps: 3
+  precision: bf16
+  amp: true
+  lr: 1.0e-6
+
+dpo:
+  sft_coef: 5.0e-05
+
+data:
+  max_candidates_per_group: 12
+  max_atoms_per_group: 4500
+```
+
+The final checkpoint is written as:
+
+```text
+<experiment.output_dir>/<experiment.run_name>/final.pt
+```
+
 ## External Artifact Layout
 
 Recommended external release layout:
@@ -62,15 +150,16 @@ checkpoints/
   grpo_balanced/final.pt
 datasets/
   binder_grpo_dataset/
+  grpo_groups/train_groups.maxatoms5000.iptm_only.jsonl
 examples/
   reppi226_yaml/
   pdb2026_yaml/
 ```
 
-Then point `configs/inference.local.yaml` to the downloaded paths.
+Then point `configs/inference.local.yaml` and `configs/train_iptm_only.local.yaml` to the downloaded paths.
 
 ## Notes
 
 - `--num_workers 0` is the safest default for long inference sweeps on the current server setup.
-- `pxdesign pipeline` also forwards unknown arguments, so `--model_name` and `--load_checkpoint_dir` can be appended there as well. The first public entrypoint here focuses on raw backbone inference via `pxdesign infer`.
+- `pxdesign pipeline` also forwards unknown arguments, so `--model_name` and `--load_checkpoint_dir` can be appended there as well. The first public inference entrypoint focuses on raw backbone generation via `pxdesign infer`.
 - Generated CIFs generally contain target chain `A0` and binder chain `B0`; downstream PDB conversion workflows have used binder chain `B`.
