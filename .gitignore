@@ -1,0 +1,36 @@
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Local configs may contain private absolute paths.
+configs/*.local.yaml
+
+# Large model/data artifacts should be hosted externally, not committed.
+*.pt
+*.ckpt
+*.safetensors
+*.pkl
+*.pkl.gz
+*.npz
+*.npy
+*.a3m
+
+# Generated outputs.
+outputs/
+output/
+runs/
+wandb/
+logs/
+ERR/
+partial_outputs/
+
+# Local backup snapshots.
+*.pre_*_backup
+*.bak
+*.tmp
+
+# Local archives.
+*.zip
+*.tar
+*.tar.gz
+*.tgz

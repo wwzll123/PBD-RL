@@ -1,0 +1,42 @@
+# GRPO-PXDesign inference configuration.
+#
+# Large files are intentionally not included in the GitHub repository.
+# Download checkpoints/datasets externally, then point these paths to local copies.
+
+pxdesign:
+  # Directory containing <model_name>.pt.
+  # Native PXDesign example:
+  #   /path/to/PXDesign/release_data/checkpoint
+  # GRPO fine-tuned example:
+  #   /path/to/grpo_checkpoint_dir
+  load_checkpoint_dir: /path/to/checkpoint_dir
+  model_name: final
+  load_strict: true
+
+input:
+  # Use either input_file or input_dir.
+  # input_file can be a PXDesign YAML, JSON, or a JSON list of tasks.
+  input_file: /path/to/design.yaml
+  input_dir: null
+  glob: "*.yaml"
+
+output:
+  dump_dir: /path/to/output_dir
+  overwrite: false
+
+sampling:
+  dtype: bf16
+  n_sample: 1
+  n_step: 400
+  eta_type: const
+  eta_min: 2.5
+  eta_max: 2.5
+  seeds: []
+
+runtime:
+  cuda_visible_devices: "0"
+  num_workers: 0
+  use_msa: true
+  use_fast_ln: true
+  # Extra args forwarded to pxdesign infer.
+  extra_args: []
