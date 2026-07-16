@@ -79,7 +79,7 @@ def _build_candidate_features_and_labels(
     from pxdesign.data.infer_data_pipeline import InferenceDataset
     from pxdesign.utils.infer import convert_to_bioassembly_dict
 
-    from PXdpo.make_prefer_pair.build_groups_from_metrics_tsv import (
+    from pbd_rl.make_prefer_pair.build_groups_from_metrics_tsv import (
         _atom_signature,
         _bioassembly_path_from_cache,
         _map_chain_after_processing,

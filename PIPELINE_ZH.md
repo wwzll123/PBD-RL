@@ -1,6 +1,6 @@
 # PXDPO 数据加载、特征化与训练管道说明
 
-本文档详细说明当前 `PXdpo` 目录下实现的端到端流程，包括：
+本文档详细说明当前 `PBD-RL` 目录下实现的端到端流程，包括：
 
 - 原始复合物与打分数据如何转换为 DPO 训练样本
 - 训练阶段如何加载样本与组 batch
@@ -21,11 +21,11 @@
 
 代码入口：
 
-- Pair 生成：`PXdpo/make_prefer_pair/build_pairs.py`
-- 训练入口：`PXdpo/train.py`
-- 数据集：`PXdpo/data.py`
-- 模型封装：`PXdpo/modeling.py`
-- DPO损失：`PXdpo/losses.py`
+- Pair 生成：`make_prefer_pair/build_pairs.py`
+- 训练入口：`train.py`
+- 数据集：`data.py`
+- 模型封装：`modeling.py`
+- DPO损失：`losses.py`
 
 ---
 
@@ -55,8 +55,8 @@
 
 ## 3. Pair 生成流程（make_prefer_pair）
 
-脚本：`PXdpo/make_prefer_pair/build_pairs.py`  
-配置：`PXdpo/configs/make_pairs.yaml`
+脚本：`make_prefer_pair/build_pairs.py`  
+配置：`configs/make_pairs.yaml`
 
 ### 3.1 流程概览
 
@@ -98,7 +98,7 @@
 
 ## 4. PreferencePairDataset 加载逻辑
 
-实现文件：`PXdpo/data.py`
+实现文件：`data.py`
 
 ### 4.1 单条样本格式（jsonl）
 
@@ -146,7 +146,7 @@
 
 ## 5. 模型封装与前向对齐
 
-实现文件：`PXdpo/modeling.py`
+实现文件：`modeling.py`
 
 ### 5.1 继承关系
 
@@ -177,7 +177,7 @@
 
 ## 6. DPO 损失定义
 
-实现文件：`PXdpo/losses.py`
+实现文件：`losses.py`
 
 设扩散重建损失为 `L`（越小越好），分数定义为 `score = -L`。
 
@@ -197,7 +197,7 @@
 
 ## 7. 训练管道（train.py）
 
-实现文件：`PXdpo/train.py`
+实现文件：`train.py`
 
 ### 7.1 训练步骤
 
@@ -271,7 +271,7 @@
 ### 10.1 先生成 pairs
 
 ```bash
-python -m PXdpo.make_prefer_pair.build_pairs \
+python -m PBD-RL.make_prefer_pair.build_pairs \
   input.complex_dir=/path/to/complex \
   input.score_json=/path/to/scores.json \
   output.out_dir=/path/to/pairs \
@@ -282,7 +282,7 @@ python -m PXdpo.make_prefer_pair.build_pairs \
 ### 10.2 再启动训练
 
 ```bash
-python -m PXdpo.train \
+python -m PBD-RL.train \
   data.pairs_jsonl=/path/to/pairs/train_pairs.jsonl \
   data.group_by_target=true \
   training.batch_size=4 \

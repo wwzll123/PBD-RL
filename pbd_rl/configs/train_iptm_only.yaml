@@ -1,0 +1,87 @@
+defaults:
+  - config
+  - _self_
+
+experiment:
+  seed: 42
+  output_dir: /root/autodl-tmp/tmp/pbd_rl_train_outputs
+  run_name: pxgrpo_iptm_only_default
+
+data:
+  data_format: target_group
+  # Default is a tiny schema/smoke example committed to the repository.
+  # For full training, replace this with the externally hosted full group file:
+  #   /path/to/train_groups.maxatoms5000.iptm_only.jsonl
+  groups_jsonl: examples/train_groups.iptm_only.smoke.jsonl
+  max_candidates_per_group: 12
+  min_candidates_per_group: 4
+  max_atoms_per_group: 4500
+  num_workers: 8
+  pin_memory: true
+  group_by_target: true
+
+model:
+  # Directory containing pxdesign_v0.1.0.pt.
+  load_checkpoint_dir: /path/to/PXDesign/release_data/checkpoint
+  model_name: pxdesign_v0.1.0
+  load_strict: true
+  tuning:
+    method: lora
+    target_prefixes:
+      - diffusion_module
+    target_suffixes:
+      - ""
+    rank: 8
+    alpha: 16.0
+    dropout: 0.0
+    merge_on_save: true
+
+pxdesign:
+  overrides:
+    - --model_name
+    - pxdesign_v0.1.0
+    - --load_checkpoint_dir
+    - /path/to/PXDesign/release_data/checkpoint
+    - --load_strict
+    - "true"
+
+training:
+  distributed: auto
+  ddp_backend: nccl
+  ddp_find_unused_parameters: true
+  epochs: 3
+  max_steps: null
+  batch_size: 1
+  grad_accum_steps: 1
+  lr: 1.0e-6
+  weight_decay: 0.01
+  betas: [0.9, 0.95]
+  max_grad_norm: 1.0
+  amp: true
+  precision: bf16
+  log_every_steps: 10
+  debug_tracebacks: false
+  save_every_steps: 0
+  num_noise_levels: 400
+  mask_binder_condition: true
+  noise_parallel_steps: 3
+
+dpo:
+  beta: 1.0
+  sft_coef: 5.0e-05
+  reference_free: false
+  loss_reduction: mean
+  multi_candidate_loss_type: top1_vs_rest
+  use_binder_weight: true
+  binder_weight: 1.0
+  non_binder_weight: 0.2
+
+grpo:
+  kl_coef: 0.02
+  clip_range: 0.2
+  log_ratio_clip: 5.0
+  negative_advantage_weight: 1.0
+  advantage_eps: 1.0e-6
+  min_reward_std: 1.0e-8
+  advantage_clip: 5.0
+  reward_clip: null

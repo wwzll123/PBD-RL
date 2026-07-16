@@ -63,7 +63,7 @@ score = ptx_iptm
 Build an iPTM-only group file from the integrated metrics TSV:
 
 ```bash
-python make_prefer_pair/build_groups_from_metrics_tsv.py \
+python -m pbd_rl.make_prefer_pair.build_groups_from_metrics_tsv \
   --metrics_tsv /path/to/integrated_metrics.flat_paths.tsv \
   --out_dir /path/to/grpo_groups_iptm_only \
   --structure_path_column complex_pdb_path \

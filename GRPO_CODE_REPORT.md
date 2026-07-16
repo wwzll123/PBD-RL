@@ -1,12 +1,12 @@
-# PXdpo Diffusion-GRPO 代码报告
+# PBD-RL Diffusion-GRPO 代码报告
 
 生成日期：2026-05-18  
-项目路径：`/root/PXDesign/PXdpo`  
+项目路径：`/root/PXDesign/PBD-RL`  
 当前推荐数据入口：`/root/autodl-tmp/binder_grpo_dataset/metadata/integrated_metrics.flat_paths.tsv`
 
 ## 1. 项目目标
 
-当前 `PXdpo` 已从原始的离线 diffusion-DPO 训练代码扩展为支持离线 diffusion-GRPO 的训练框架。项目的核心任务是：
+当前 `PBD-RL` 已从原始的离线 diffusion-DPO 训练代码扩展为支持离线 diffusion-GRPO 的训练框架。项目的核心任务是：
 
 1. 针对每个 target，PXDesign 生成多个 binder backbone。
 2. 对 binder 进行反向折叠得到序列。
@@ -110,7 +110,7 @@ make_prefer_pair/build_groups_from_metrics_tsv.py
 推荐命令：
 
 ```bash
-python PXdpo/make_prefer_pair/build_groups_from_metrics_tsv.py \
+python make_prefer_pair/build_groups_from_metrics_tsv.py \
   --metrics_tsv /root/autodl-tmp/binder_grpo_dataset/metadata/integrated_metrics.flat_paths.tsv \
   --out_dir /root/autodl-tmp/tmp/grpo_groups \
   --max_candidates_per_target 24 \
@@ -418,7 +418,7 @@ train.py
 训练入口使用 Hydra：
 
 ```bash
-python PXdpo/train.py ...
+python train.py ...
 ```
 
 流程：
@@ -563,7 +563,7 @@ training:
 启动示例：
 
 ```bash
-torchrun --nproc_per_node=2 PXdpo/train.py \
+torchrun --nproc_per_node=2 train.py \
   data.groups_jsonl=/root/autodl-tmp/tmp/grpo_groups/train_groups.jsonl
 ```
 
@@ -588,7 +588,7 @@ BF16 下不启用 GradScaler。若切换为 FP16，则 GradScaler 会启用。
 ```bash
 cd /root/PXDesign
 
-python PXdpo/make_prefer_pair/build_groups_from_metrics_tsv.py \
+python make_prefer_pair/build_groups_from_metrics_tsv.py \
   --metrics_tsv /root/autodl-tmp/binder_grpo_dataset/metadata/integrated_metrics.flat_paths.tsv \
   --out_dir /root/autodl-tmp/tmp/grpo_groups \
   --max_candidates_per_target 24 \
@@ -599,7 +599,7 @@ python PXdpo/make_prefer_pair/build_groups_from_metrics_tsv.py \
 ### 9.2 单卡 smoke 训练
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python PXdpo/train.py \
+CUDA_VISIBLE_DEVICES=0 python train.py \
   data.groups_jsonl=/root/autodl-tmp/tmp/grpo_groups/train_groups.jsonl \
   data.max_candidates_per_group=2 \
   data.min_candidates_per_group=2 \

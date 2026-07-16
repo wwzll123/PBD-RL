@@ -1,0 +1,30 @@
+defaults:
+  - _self_
+
+experiment:
+  seed: 42
+
+input:
+  complex_dir: ./data/complex
+  score_json: ./data/scores.json
+
+output:
+  out_dir: ./data/pairs
+
+pairing:
+  # ranking score = w_ptm * pTM + w_iptm * ipTM
+  w_ptm: 0.2
+  w_iptm: 0.8
+  # number of preference pairs to generate per target.
+  pairs_per_target: 64
+  # offline target-group DPO settings
+  max_candidates_per_target: 10
+  min_candidates_per_target: 2
+
+make_pairs:
+  # For Protenix-designed CIFs, target/binder are often renamed to A0/B0.
+  # Leave null to auto-infer, or set explicitly to A0/B0.
+  target_chain: null
+  binder_chain: null
+  use_msa: false
+

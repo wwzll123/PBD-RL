@@ -1,7 +1,7 @@
-# PXdpo Code and Data Review Findings
+# PBD-RL Code and Data Review Findings
 
 Review date: 2026-05-18  
-Code path: `/root/PXDesign/PXdpo`  
+Code path: `/root/PXDesign/PBD-RL`  
 Data path: `/root/autodl-tmp/binder_grpo_dataset`
 
 ## Scope

@@ -330,7 +330,7 @@ if __name__ == "__main__":
     task = {
         "name": "5sa3_binder_generation",
         "condition": {
-            "structure_file": "/root/PXDesign-main/PXdpo/example_bio_gz/5sa3.pkl.gz",
+            "structure_file": "/root/PXDesign/PBD-RL/example_bio_gz/5sa3.pkl.gz",
             # Binder generation only: keep target chain.
             "filter": {"chain_id": ["A0"], "crop": {"A0": "1-100"}},
             "msa": {},
@@ -355,7 +355,7 @@ if __name__ == "__main__":
     )
     print(coords.shape)  # [N_sample, N_atom, 3]
 
-    out_dir = Path("/root/PXDesign-main/PXdpo/partial_outputs") / task["name"]
+    out_dir = Path("/root/PXDesign/PBD-RL/partial_outputs") / task["name"]
     saved = save_partial_samples_to_cif(
         coords=coords,
         atom_array=atom_array,

@@ -1,8 +1,8 @@
-# PXdpo Diffusion-GRPO 项目大纲与 Review Prompt
+# PBD-RL Diffusion-GRPO 项目大纲与 Review Prompt
 
 生成日期：2026-05-18  
-代码路径：`/root/PXDesign/PXdpo`  
-主报告：`/root/PXDesign/PXdpo/GRPO_CODE_REPORT.md`
+代码路径：`/root/PXDesign/PBD-RL`  
+主报告：`/root/PXDesign/PBD-RL/GRPO_CODE_REPORT.md`
 
 ## 1. 项目大纲
 
@@ -150,7 +150,7 @@ model:
 ```bash
 cd /root/PXDesign
 
-python PXdpo/make_prefer_pair/build_groups_from_metrics_tsv.py \
+python make_prefer_pair/build_groups_from_metrics_tsv.py \
   --metrics_tsv /root/autodl-tmp/binder_grpo_dataset/metadata/integrated_metrics.flat_paths.tsv \
   --out_dir /root/autodl-tmp/tmp/grpo_groups \
   --max_candidates_per_target 24 \
@@ -161,7 +161,7 @@ python PXdpo/make_prefer_pair/build_groups_from_metrics_tsv.py \
 单卡 smoke：
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python PXdpo/train.py \
+CUDA_VISIBLE_DEVICES=0 python train.py \
   data.groups_jsonl=/root/autodl-tmp/tmp/grpo_groups/train_groups.jsonl \
   data.max_candidates_per_group=2 \
   data.min_candidates_per_group=2 \
@@ -176,7 +176,7 @@ CUDA_VISIBLE_DEVICES=0 python PXdpo/train.py \
 DDP 示例：
 
 ```bash
-torchrun --nproc_per_node=2 PXdpo/train.py \
+torchrun --nproc_per_node=2 train.py \
   data.groups_jsonl=/root/autodl-tmp/tmp/grpo_groups/train_groups.jsonl
 ```
 
@@ -185,7 +185,7 @@ torchrun --nproc_per_node=2 PXdpo/train.py \
 下面这段可以直接复制给其他代码审查 agent。
 
 ```text
-你是一个严格的 senior ML systems/code reviewer。请 review `/root/PXDesign/PXdpo` 这个项目的最新代码，目标是发现 correctness bug、训练逻辑错误、数据处理问题、DDP/AMP 风险、shape/mask 错误和潜在数据泄漏。请优先给出具体文件/函数/行附近的发现，按严重程度排序，不要只做泛泛建议。
+你是一个严格的 senior ML systems/code reviewer。请 review `/root/PXDesign/PBD-RL` 这个项目的最新代码，目标是发现 correctness bug、训练逻辑错误、数据处理问题、DDP/AMP 风险、shape/mask 错误和潜在数据泄漏。请优先给出具体文件/函数/行附近的发现，按严重程度排序，不要只做泛泛建议。
 
 项目背景：
 - 这是 PXDesign binder diffusion 的离线 diffusion-GRPO 改造。
@@ -284,7 +284,7 @@ torchrun --nproc_per_node=2 PXdpo/train.py \
 建议让其他 agent 输出：
 
 ```text
-PXdpo_REVIEW_FINDINGS.md
+PBD-RL_REVIEW_FINDINGS.md
 ```
 
 并至少覆盖：

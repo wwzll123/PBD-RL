@@ -1,0 +1,108 @@
+defaults:
+  - _self_
+
+experiment:
+  seed: 42
+  output_dir: /root/autodl-tmp/tmp/pxdpo_outputs
+  run_name: pxgrpo_default
+
+data:
+  # "pair": legacy chosen/rejected pairwise samples
+  # "target_group": offline multi-candidate groups for one target
+  data_format: target_group
+  pairs_jsonl: ./data/pairs/train_pairs.jsonl
+  groups_jsonl: /root/autodl-tmp/tmp/grpo_groups/train_groups.jsonl
+  # Used only for target_group mode.
+  max_candidates_per_group: 12
+  min_candidates_per_group: 4
+  # Skip groups whose first PXDesign complex has more all-atom records than this.
+  # This is the main protection against DDP backward OOM on unusually large targets.
+  max_atoms_per_group: null
+  num_workers: 8
+  pin_memory: true
+  # If true, each optimization step only sees one target group.
+  group_by_target: true
+
+model:
+  # Path to PXDesign checkpoint directory and model name.
+  # The real checkpoint path is:
+  #   ${load_checkpoint_dir}/${model_name}.pt
+  load_checkpoint_dir: ./release_data/checkpoint
+  model_name: pxdesign_v0.1.0
+  load_strict: true
+  trainable_modules:
+    - diffusion_module
+    - design_condition_embedder
+  tuning:
+    # Safer default for GRPO: keep the pretrained PXDesign weights frozen and
+    # train low-rank adapters inside the diffusion denoiser only.
+    method: lora
+    target_prefixes:
+      - diffusion_module
+    target_suffixes:
+      - ""
+    rank: 8
+    alpha: 16.0
+    dropout: 0.0
+    merge_on_save: true
+
+pxdesign:
+  # Overrides passed to pxdesign.utils.infer.get_configs(...)
+  overrides:
+    - --model_name
+    - pxdesign_v0.1.0
+    - --load_checkpoint_dir
+    - ./release_data/checkpoint
+    - --load_strict
+    - "true"
+
+training:
+  # "auto" enables DDP when launched by torchrun with WORLD_SIZE > 1.
+  distributed: auto
+  ddp_backend: nccl
+  ddp_find_unused_parameters: true
+  epochs: 5
+  # Stop after this many optimizer/data steps when set. Useful for smoke tests.
+  max_steps: null
+  batch_size: 1
+  grad_accum_steps: 1
+  lr: 1.0e-6
+  weight_decay: 0.01
+  betas: [0.9, 0.95]
+  max_grad_norm: 1.0
+  amp: true
+  precision: bf16
+  log_every_steps: 10
+  debug_tracebacks: false
+  save_every_steps: 500
+  num_noise_levels: 400
+  # Remove generated binder coordinates from condition features before encoding.
+  # This prevents offline complex structures from leaking the target binder
+  # backbone into the denoising condition.
+  mask_binder_condition: true
+  # Parallel diffusion-noise steps (K). Each sample draws K sigmas in one forward.
+  # K=4 is the recommended full-run default for 48G cards with 12 candidates/group.
+  # If memory is stable, try K=8 in a follow-up run.
+  noise_parallel_steps: 4
+
+dpo:
+  beta: 1.0
+  sft_coef: 0.05
+  reference_free: false
+  loss_reduction: mean
+  multi_candidate_loss_type: top1_vs_rest
+  use_binder_weight: true
+  binder_weight: 1.0
+  non_binder_weight: 0.2
+
+grpo:
+  # Used for data.data_format=target_group.
+  kl_coef: 0.02
+  clip_range: 0.2
+  log_ratio_clip: 5.0
+  # Symmetric GRPO signal: do not downweight negative-advantage candidates by default.
+  negative_advantage_weight: 1.0
+  advantage_eps: 1.0e-6
+  min_reward_std: 1.0e-8
+  advantage_clip: 5.0
+  reward_clip: null
