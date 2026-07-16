@@ -12,7 +12,7 @@ Large artifacts are not stored in this repository:
 Download these artifacts separately and set their local paths in the YAML configs.
 
 
-# Installation
+## Installation
 
 This project is built on PXDesign and only requires the installation of [PXDesign](https://github.com/bytedance/PXDesign).
 
