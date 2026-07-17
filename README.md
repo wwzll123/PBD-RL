@@ -159,6 +159,4 @@ Then point `configs/inference.local.yaml` and `configs/train_iptm_only.local.yam
 
 ## Notes
 
-- `--num_workers 0` is the safest default for long inference sweeps on the current server setup.
 - `pxdesign pipeline` also forwards unknown arguments, so `--model_name` and `--load_checkpoint_dir` can be appended there as well. The first public inference entrypoint focuses on raw backbone generation via `pxdesign infer`.
-- Generated CIFs generally contain target chain `A0` and binder chain `B0`; downstream PDB conversion workflows have used binder chain `B`.
