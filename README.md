@@ -8,7 +8,7 @@ PBD-RL is a protein backbone generation method for optimizing the foldability an
 - This project is built on PXDesign and only requires the installation of [PXDesign](https://github.com/bytedance/PXDesign).
 - You should download the PBD-RL [weight](https://huggingface.co/zengwenwu/PBD-RL).
 - If you want to training PBD-RL from scratch, the plug-and-play training dataset is available [here](https://huggingface.co/zengwenwu/PBD-RL) in .jsonl format.
-- The raw .CIF file is stored on Zenodo.
+- The raw .CIF file is stored in Zenodo.
 
 ## Inference
 
