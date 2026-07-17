@@ -1,21 +1,14 @@
 # PBD-RL
 
-PBD-RL contains GRPO fine-tuning and inference utilities for PXDesign-based protein binder backbone design.
-
-Large artifacts are not stored in this repository:
-
-- PXDesign base checkpoints
-- GRPO fine-tuned checkpoints
-- full training datasets
-- generated PXDesign / IF / Protenix intermediate files
-
-Download these artifacts separately and set their local paths in the YAML configs.
+PBD-RL is a protein backbone generation method for optimizing the foldability and interface quality of binders, based on PXDesign, through Diffusion-GRPO.
 
 
 ## Installation
 
-This project is built on PXDesign and only requires the installation of [PXDesign](https://github.com/bytedance/PXDesign).
-
+1. This project is built on PXDesign and only requires the installation of [PXDesign](https://github.com/bytedance/PXDesign).
+2. You should download the PBD-RL [weight](https://huggingface.co/zengwenwu/PBD-RL).
+3. If you want to training PBD-RL from scratch, the plug-and-play training dataset is available [here](https://huggingface.co/zengwenwu/PBD-RL) in .jsonl format.
+4. The raw .CIF file is stored on Zenodo.
 
 ## Inference
 
