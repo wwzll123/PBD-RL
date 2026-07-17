@@ -157,6 +157,6 @@ examples/
 
 Then point `configs/inference.local.yaml` and `configs/train_iptm_only.local.yaml` to the downloaded paths.
 
-## Notes
+## Cite
 
-- `pxdesign pipeline` also forwards unknown arguments, so `--model_name` and `--load_checkpoint_dir` can be appended there as well. The first public inference entrypoint focuses on raw backbone generation via `pxdesign infer`.
+Pass.
