@@ -1,6 +1,6 @@
 # PBD-RL
-
-![PBD-RL is a protein backbone generation method for optimizing the foldability and interface quality of binders, based on PXDesign, through Diffusion-GRPO.](main.png)
+PBD-RL is a protein backbone generation method for optimizing the foldability and interface quality of binders, based on PXDesign, through Diffusion-GRPO.
+![PBD-RL](main.png)
 
 
 ## Installation
