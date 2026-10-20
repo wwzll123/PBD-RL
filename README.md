@@ -156,7 +156,3 @@ examples/
 ```
 
 Then point `configs/inference.local.yaml` and `configs/train_iptm_only.local.yaml` to the downloaded paths.
-
-## Cite
-
-Pass.
